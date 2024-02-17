@@ -3,20 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ducks Pond</title>
+    <title>Guitars Pond</title>
 </head>
 <body>
 <script>
-    async function fetchAndDisplayDucks() {
-        let response = await fetch("http://localhost:8080/ducks");
-        let ducks = await response.json();
+    async function fetchAndDisplayGuitars() {
+        let response = await fetch("http://localhost:8080/Guitars");
+        let Guitars = await response.json();
 
-        for (let duck of ducks) {
+        for (let Guitar of Guitars) {
             let cardDiv = document.createElement("div");
             cardDiv.className = "card";
 
             let img = document.createElement("img");
-            img.src = "http://localhost:8080/ducks/" + duck.id + "/image";
+            img.src = "http://localhost:8080/Guitars/" + Guitar.id + "/image";
             img.alt = "Avatar";
             img.style.width = "100%";
             cardDiv.appendChild(img);
@@ -25,11 +25,11 @@
             containerDiv.className = "container";
 
             let h4 = document.createElement("h4");
-            h4.innerHTML = "<b>" + duck.id + "</b>";
+            h4.innerHTML = "<b>" + Guitar.id + "</b>";
             containerDiv.appendChild(h4);
 
             let p = document.createElement("p");
-            p.textContent = duck.type;
+            p.textContent = Guitar.type;
             containerDiv.appendChild(p);
 
             cardDiv.appendChild(containerDiv);
@@ -38,7 +38,7 @@
         }
     }
 
-    fetchAndDisplayDucks();
+    fetchAndDisplayGuitars();
 </script>
 </body>
 </html>
