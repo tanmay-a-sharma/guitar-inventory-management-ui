@@ -38,43 +38,36 @@
         <th>Type</th>
     </tr>
     </thead>
-    <tbody id="result">
 
     </tbody>
 
 </table>
 
 <script>
-    let Guitars = [];
-    async function getAll() {
-        let response = await fetch("http://localhost:8080/Guitars");
-        let data = await response.json();
-        return data;
-    }
+    let host = "http://localhost:8080";
+    async function searchGuitars() {
+        let searchInput = document.getElementById("type").value;
 
-    async function search() {
-
-        if (Guitars.length == 0) {
-            Guitars = await getAll();
-        }
-
-        let GuitarType = document.getElementById("type").value;
-        let table = document.getElementById("result");
-        table.innerHTML = "";
-
-        for (let Guitar of Guitars) {
-            if (!GuitarType || Guitar.type.toLowerCase() == GuitarType.toLowerCase()) {
-                let row = document.createElement("tr");
-                let cell1 = document.createElement("td");
-                let id = document.createTextNode(Guitar.id);
-                cell1.appendChild(id);
-                row.appendChild(cell1);
-                let cell2 = document.createElement("td");
-                let type = document.createTextNode(Guitar.type);
-                cell2.appendChild(type);
-                row.appendChild(cell2);
-                table.appendChild(row);
+        try {
+            let response = await fetch(host + "/Guitars/search?query=" + searchInput);
+            if (response.ok) {
+                let guitars = await response.json();
+                let table = document.getElementById("resultsTable");
+                table.innerHTML = "";
+                for (let guitar of guitars) {
+                    let row = table.insertRow();
+                    let cell1 = row.insertCell(0);
+                    let cell2 = row.insertCell(1);
+                    cell1.textContent = guitar.id;
+                    cell2.textContent = guitar.guitarType;
+                }
+            } else {
+                console.error("Error: ", response);
+                alert("Something went wrong");
             }
+        } catch (error) {
+            console.error("Error: ", error);
+            alert("Something went wrong");
         }
     }
 </script>

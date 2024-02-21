@@ -7,42 +7,50 @@
 </head>
 <body>
 <div>
-  <label>Id:</label>
+  <label for="id">Id:</label>
   <input id="id" />
-  <label>Type:</label>
+  <label for="type">Type:</label>
   <input id="type" />
-  <label>Image:</label>
+  <label for="imageInput">Image:</label>
   <input type="file" id="imageInput" />
   <button onclick="addTheGuitar()">Add the Guitar</button>
 </div>
 <script>
   let host = "http://localhost:8080";
   async function addTheGuitar() {
-    let message = "";
     let GuitarId = document.getElementById("id").value;
     let GuitarType = document.getElementById("type").value;
-    let Guitar = {id: GuitarId, type: GuitarType};
+    let imageInput = document.getElementById("imageInput");
+
+    if (!GuitarId || !GuitarType || !imageInput.files[0]) {
+      alert("Please enter a value for all fields.");
+      return;
+    }
+
+    let Guitar = {id: GuitarId, guitarType: GuitarType};
     console.log("You entered:" + JSON.stringify(Guitar));
 
     let request = {
-      method: "POST", headers:
-              {
-                "Content-Type": "application/json"
-              }
-      ,
+      method: "POST", headers: { "Content-Type": "application/json" },
       body: JSON.stringify(Guitar)
     };
-    let response = await fetch(host + "/Guitars", request);
-    if (response.status == 200) {
-      let result = await submitTheImage();
-      message = "The Guitar was added successfully!";
-    } else {
-      console. log (response);
-      message = "Something went wrong! Guitar data could not be saved.";
-    }
-    alert (message);
 
-    //TODO
+    try {
+      let response = await fetch(host + "/Guitars", request);
+      if (response.ok) {
+        if(await submitTheImage()) {
+          alert("The Guitar was added to the system");
+        } else {
+          alert("Something went wrong");
+        }
+      } else {
+        console.error("Error: ", response);
+        alert("Something went wrong.");
+      }
+    } catch (error) {
+      console.error("Error: ", error);
+      alert("Something went wrong.");
+    }
   }
 
 
@@ -56,8 +64,12 @@
       body: formData
     };
     let response = await fetch(host + "/Guitars/" + GuitarId + "/image", request);
-    let result = await response.text();
-    return result;
+    if(response.ok) {
+      return await response.text();
+    } else {
+      console.error("Error: ", response);
+      return false;
+    }
   }
 </script>
 </body>
